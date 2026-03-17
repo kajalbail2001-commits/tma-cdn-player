@@ -92,7 +92,9 @@
             // Для теста используем прямую ссылку на локальный сервер
             // ЭТОТ URL СКОРО ЗАМЕНИМ НА АВТОМАТИЧЕСКИЙ (Backend `/api/getVideoUrl`)
             // const videoUrl = 'http://192.168.1.180:3000/stream/test.mp4';
-            const videoUrl = 'https://f75aecea7025c4.lhr.life/stream/test.mp4'; // Туннель для тестов (обновлен)
+            
+            // Добавляем параметр времени, чтобы сбросить жесткий кэш Telegram WebApp
+            const videoUrl = 'https://f75aecea7025c4.lhr.life/stream/test.mp4?t=' + Date.now(); 
             
             // ----------------------------------------------------
             player.src = videoUrl;
