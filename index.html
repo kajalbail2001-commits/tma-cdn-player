@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TMA Video Player</title>
+    <!-- Подключаем скрипт Telegram Web Apps (обязательно!) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Сброс стилей и настройка на весь экран */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--tg-theme-bg-color, #000); /* Цвет фона из темы ТГ (с фолбеком на черный) */
+            color: var(--tg-theme-text-color, #fff); /* Цвет текста из темы ТГ */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Контейнер плеера */
+        .video-container {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000; /* Плеер всегда на черном фоне */
+        }
+
+        /* Сам плеер */
+        video {
+            width: 100%;
+            max-height: 100%;
+            outline: none;
+            object-fit: contain; /* Видео вписывается, сохраняя пропорции */
+        }
+
+        /* Текст-заглушка/ошибка */
+        #status-message {
+            position: absolute;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-message">Инициализация плеера...</div>
+
+    <div class="video-container">
+        <!-- Атрибуты для iOS: playsinline (чтобы не открывалось в полноэкранном нативном плеере Apple сразу) и controlsList (чтобы скрыть кнопку скачивания) -->
+        <video id="tmaPlayer" controls playsinline preload="auto" controlsList="nodownload">
+            <!-- Источник видео будет подставлен через JS -->
+            Ваш браузер не поддерживает HTML5 видео.
+        </video>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // Разворачиваем аппку на всю доступную высоту шторки
+        tg.expand();
+        
+        // Сообщаем ТГ, что приложение готово к показу
+        tg.ready();
+
+        const player = document.getElementById('tmaPlayer');
+        const statusMsg = document.getElementById('status-message');
+
+        // --- ЛОГИКА ПОЛУЧЕНИЯ ВИДЕО ---
+        
+        // В реальном проекте мы бы брали данные юзера (tg.initData) 
+        // и отправляли POST запрос на наш Backend (Node.js/Python), 
+        // а в ответ получали бы ссылку на видео. 
+        // Но для теста мы просто имитируем, как будто мы эту ссылку уже получили.
+
+        // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
+        function initPlayer() {
+            // Для теста используем открытое бесплатное видео с архитектурным таймлапсом (Big Buck Bunny или подобное)
+            // В релизе тут будет ссылка вида: https://tvoi-domen.com/media/super_video_123.mp4
+            const testVideoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'; 
+            
+            player.src = testVideoUrl;
+            
+            // Пытаемся запустить автоплей (хотя браузеры мобилок обычно требуют первый клик юзера, 
+            // но если видео без звука (muted) - может завестись само. 
+            // Оставим запуск по нажатию на Play для надежности)
+            
+            player.load();
+        }
+
+        // Запускаем инициализацию
+        initPlayer();
+
+        // --- ДОПОЛНИТЕЛЬНЫЕ ФИШКИ ДЛЯ UX ---
+
+        // Если видео не найдено или сервер отвалился
+        player.addEventListener('error', () => {
+             statusMsg.style.display = 'block';
+             statusMsg.innerText = 'Ошибка загрузки видео. Возможно, файл удален или сервер недоступен.';
+             player.style.display = 'none';
+        });
+
+        // Когда видео готово к проигрыванию
+        player.addEventListener('canplay', () => {
+             statusMsg.style.display = 'none';
+        });
+
+        // Настройка кнопки закрытия (MainButton/BackButton ТГ)
+        // Можно вынести кнопку "Закрыть видео" прямо в интерфейс ТГ
+        tg.MainButton.text = "ЗАКРЫТЬ ПЛЕЕР";
+        tg.MainButton.show();
+        tg.MainButton.onClick(() => {
+            tg.close(); // Закрываем шторку TMA и возвращаем юзера в канал
+        });
+
+    </script>
+</body>
+</html>
