@@ -90,10 +90,12 @@
         // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
         function initPlayer() {
             // Для теста используем прямую ссылку на локальный сервер
-            // URL прокинут наружу через localhost.run (чтобы тестить без Wi-Fi и заглушек)
-            const testVideoUrl = 'https://ec7798fd6f2b89.lhr.life/stream/test.mp4'; 
+            // ЭТОТ URL СКОРО ЗАМЕНИМ НА АВТОМАТИЧЕСКИЙ (Backend `/api/getVideoUrl`)
+            // const videoUrl = 'http://192.168.1.180:3000/stream/test.mp4';
+            const videoUrl = 'https://f75aecea7025c4.lhr.life/stream/test.mp4'; // Туннель для тестов (обновлен)
             
-            player.src = testVideoUrl;
+            // ----------------------------------------------------
+            player.src = videoUrl;
             
             // Пытаемся запустить автоплей (хотя браузеры мобилок обычно требуют первый клик юзера, 
             // но если видео без звука (muted) - может завестись само. 
