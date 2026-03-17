@@ -88,22 +88,30 @@
         // Но для теста мы просто имитируем, как будто мы эту ссылку уже получили.
 
         // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
-        function initPlayer() {
-            // Для теста используем прямую ссылку на локальный сервер
-            // ЭТОТ URL СКОРО ЗАМЕНИМ НА АВТОМАТИЧЕСКИЙ (Backend `/api/getVideoUrl`)
-            // const videoUrl = 'http://192.168.1.180:3000/stream/test.mp4';
-            
-            // Добавляем параметр времени, чтобы сбросить жесткий кэш Telegram WebApp
-            const videoUrl = 'https://09496f9d34e066.lhr.life/stream/test.mp4?t=' + Date.now(); 
-            
-            // ----------------------------------------------------
-            player.src = videoUrl;
-            
-            // Пытаемся запустить автоплей (хотя браузеры мобилок обычно требуют первый клик юзера, 
-            // но если видео без звука (muted) - может завестись само. 
-            // Оставим запуск по нажатию на Play для надежности)
-            
-            player.load();
+        async function initPlayer() {
+            const BACKEND = 'https://09496f9d34e066.lhr.life';
+            statusMsg.textContent = '🔗 Получаем ссылку на видео...';
+
+            try {
+                const resp = await fetch(`${BACKEND}/api/getVideoUrl`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoId: 'test.mp4' })
+                });
+
+                if (!resp.ok) throw new Error(`Backend HTTP ${resp.status}`);
+                const data = await resp.json();
+
+                if (data.status !== 'success') throw new Error('Backend вернул ошибку');
+
+                const videoUrl = data.url + '?t=' + Date.now();
+                statusMsg.textContent = '✅ Ссылка получена, загружаем...';
+                player.src = videoUrl;
+                player.load();
+            } catch (err) {
+                statusMsg.textContent = `❌ Ошибка получения ссылки: ${err.message}`;
+                console.error('initPlayer error:', err);
+            }
         }
 
         // Запускаем инициализацию
