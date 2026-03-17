@@ -89,9 +89,9 @@
 
         // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
         function initPlayer() {
-            // Для теста используем открытое бесплатное видео с архитектурным таймлапсом (Big Buck Bunny или подобное)
-            // В релизе тут будет ссылка вида: https://tvoi-domen.com/media/super_video_123.mp4
-            const testVideoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'; 
+            // Для теста используем прямую ссылку на локальный сервер
+            // URL сформирован для локальной сети (чтобы телефон мог достучаться до ПК)
+            const testVideoUrl = 'http://192.168.0.22:3000/stream/test.mp4'; 
             
             player.src = testVideoUrl;
             
