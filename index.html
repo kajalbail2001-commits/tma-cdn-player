@@ -90,8 +90,8 @@
         // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
         function initPlayer() {
             // Для теста используем прямую ссылку на локальный сервер
-            // URL прокинут наружу через localtunnel (чтобы тестить без Wi-Fi)
-            const testVideoUrl = 'https://breezy-hats-smash.loca.lt/stream/test.mp4'; 
+            // URL прокинут наружу через localhost.run (чтобы тестить без Wi-Fi и заглушек)
+            const testVideoUrl = 'https://ec7798fd6f2b89.lhr.life/stream/test.mp4'; 
             
             player.src = testVideoUrl;
             
