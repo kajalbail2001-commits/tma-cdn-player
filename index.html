@@ -112,9 +112,17 @@
         // --- ДОПОЛНИТЕЛЬНЫЕ ФИШКИ ДЛЯ UX ---
 
         // Если видео не найдено или сервер отвалился
-        player.addEventListener('error', () => {
+        player.addEventListener('error', (e) => {
+             const error = player.error;
+             let errorDetails = '';
+             if (error) {
+                 errorDetails = `Code: ${error.code}, Msg: ${error.message}`;
+             } else {
+                 errorDetails = 'Unknown API error';
+             }
+             
              statusMsg.style.display = 'block';
-             statusMsg.innerText = 'Ошибка загрузки видео. Возможно, файл удален или сервер недоступен.';
+             statusMsg.innerText = `Ошибка загрузки видео: ${errorDetails}. Попробуй переоткрыть шторку. URL: ${player.src}`;
              player.style.display = 'none';
         });
 
