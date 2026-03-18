@@ -83,12 +83,13 @@
         // --- ЛОГИКА ПОЛУЧЕНИЯ ВИДЕО ---
         function initPlayer() {
             // Читаем параметры из URL (передает Telegram-бот при открытии Web App)
-            const params = new URLSearchParams(window.location.search);
-            const server = params.get('s');
-            const video = params.get('v') || 'test.mp4';
+            // Используем window.location.href для большей надежности на всех устройствах
+            const url = new URL(window.location.href);
+            const server = url.searchParams.get('s');
+            const video = url.searchParams.get('v') || 'test.mp4';
 
             if (!server) {
-                statusMsg.textContent = '❌ Ошибка: Сервер не указан в ссылке.';
+                statusMsg.textContent = '❌ Ошибка: Сервер не указан в ссылке. Пожалуйста, сгенерируй НОВУЮ кнопку в боте (напиши /test или /start), так как старые кнопки работают по старому адресу!';
                 statusMsg.style.display = 'block';
                 return;
             }
