@@ -81,37 +81,22 @@
         const statusMsg = document.getElementById('status-message');
 
         // --- ЛОГИКА ПОЛУЧЕНИЯ ВИДЕО ---
-        
-        // В реальном проекте мы бы брали данные юзера (tg.initData) 
-        // и отправляли POST запрос на наш Backend (Node.js/Python), 
-        // а в ответ получали бы ссылку на видео. 
-        // Но для теста мы просто имитируем, как будто мы эту ссылку уже получили.
+        function initPlayer() {
+            // Читаем параметры из URL (передает Telegram-бот при открытии Web App)
+            const params = new URLSearchParams(window.location.search);
+            const server = params.get('s');
+            const video = params.get('v') || 'test.mp4';
 
-        // Эмуляция задержки (как будто мы ждем ответа от бэкенда)
-        async function initPlayer() {
-            const BACKEND = 'https://stylish-hourly-bye-sophisticated.trycloudflare.com';
-            statusMsg.textContent = '🔗 Получаем ссылку на видео...';
-
-            try {
-                const resp = await fetch(`${BACKEND}/api/getVideoUrl`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ videoId: 'test.mp4' })
-                });
-
-                if (!resp.ok) throw new Error(`Backend HTTP ${resp.status}`);
-                const data = await resp.json();
-
-                if (data.status !== 'success') throw new Error('Backend вернул ошибку');
-
-                const videoUrl = data.url + '?t=' + Date.now();
-                statusMsg.textContent = '✅ Ссылка получена, загружаем...';
-                player.src = videoUrl;
-                player.load();
-            } catch (err) {
-                statusMsg.textContent = `❌ Ошибка получения ссылки: ${err.message}`;
-                console.error('initPlayer error:', err);
+            if (!server) {
+                statusMsg.textContent = '❌ Ошибка: Сервер не указан в ссылке.';
+                statusMsg.style.display = 'block';
+                return;
             }
+
+            const videoUrl = `https://${server}/media/${video}?t=` + Date.now();
+            statusMsg.textContent = '✅ Ссылка получена, загружаем...';
+            player.src = videoUrl;
+            player.load();
         }
 
         // Запускаем инициализацию
