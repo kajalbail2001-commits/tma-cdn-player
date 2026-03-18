@@ -94,7 +94,7 @@
                 return;
             }
 
-            const videoUrl = `https://${server}/media/${video}?t=` + Date.now();
+            const videoUrl = `https://${server}/stream/${video}?t=` + Date.now();
             statusMsg.textContent = '✅ Ссылка получена, загружаем...';
             player.src = videoUrl;
             player.load();
